@@ -91,7 +91,7 @@ set_module_urls() {
 	wolfssl_github_tag="$(grep -Eom1 'v([0-9.]+?)-stable' <(curl "https://github.com/wolfSSL/wolfssl/tags"))"
 	wolfssl_github_url="https://github.com/wolfSSL/wolfssl.git"
 	#
-	boost_version="$(grep -Eom1 '1.(.*).0$' <(curl -sNL "https://github.com/boostorg/boost/tags"))"
+	boost_version="$(curl -s "https://api.github.com/repos/boostorg/boost/tags" | jq -r '.[].name' | grep -Eom1 '1.(.*).0$')"
 	[[ "$LIBTORRENT_GITHUB_TAG" =~ (libtorrent-1_1_*|RC_1_1) ]] && boost_version="1.76.0"
 	boost_github_tag="boost-${boost_version}"
 	boost_url="https://boostorg.jfrog.io/artifactory/main/release/${boost_version}/source/boost_${boost_version//./_}.tar.gz"
@@ -107,8 +107,8 @@ set_module_urls() {
 	else
 		libtorrent_github_tag="$(grep -Eom1 "v$libtorrent_version.([0-9]{1,2})" <(curl "https://github.com/arvidn/libtorrent/tags"))"
 	fi
-	#
-	ltconfig_version="$(grep -Eom1 "ltConfig-(.*).egg" <(curl "https://github.com/ratanakvlun/deluge-ltconfig/releases"))"
+	# curl -s "https://api.github.com/repos/ratanakvlun/deluge-ltconfig/releases" | jq -r '.[].name' | grep -Eom1 '1.(.*).0$'
+	ltconfig_version="$(curl -s "https://api.github.com/repos/ratanakvlun/deluge-ltconfig/releases/latest" | jq -r '.assets[].name' | grep -Eom1 'ltConfig-(.*).egg' | sed 's/ltConfig-//;s/.egg//')"
 	ltconfig_url="$(grep -Eom1 'ht(.*)ltConfig(.*)egg' <(curl "https://api.github.com/repos/ratanakvlun/deluge-ltconfig/releases/latest"))"
 }
 #####################################################################################################################################################
