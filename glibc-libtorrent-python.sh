@@ -318,8 +318,12 @@ installation_modules() {
 		#
 		python_short_version="${python_major}.${python_minor}"
 		python_link_version="${python_major}${python_minor}"
+  		#
+		python_executable="$(python${PYTHON_VERSION} -c "import sys; print(sys.executable)")"
+		python_include="$(python${PYTHON_VERSION} -c "import sysconfig; print(sysconfig.get_path('include'))")"
+		python_lib="$(python${PYTHON_VERSION} -c "import sysconfig; print(sysconfig.get_path('stdlib'))")"
 		#
-		echo -e "using gcc : : : <cxxflags>-std=c++${cxxstd:-17} ;${tn}using python : ${python_short_version} : /usr/bin/python${python_short_version} : /usr/include/python${python_short_version} : /usr/lib/python${python_short_version} ;" > "$HOME/user-config.jam"
+		echo -e "using gcc : : : <cxxflags>-std=c++${cxxstd:-17} ;${tn}using python : ${python_short_version} : ${python_executable} : ${python_include} : ${python_lib} ;" > "$HOME/user-config.jam"
 		#
 		## Echo the build directory.
 		echo -e "${tn}${tb}Install Prefix${cend} : ${cg}$install_dir${cend}"
